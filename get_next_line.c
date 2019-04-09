@@ -6,9 +6,35 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 21:51:08 by atropnik          #+#    #+#             */
-/*   Updated: 2019/04/04 21:51:13 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/04/08 15:38:17 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "get_next_line.h"
+
+int		reatdlinewidth(int fd)
+{
+	char	buff[2];
+	size_t	nbread;
+
+	(void) memset((void*) buff, 0, (size_t) 2);
+	nbread = read(fd, (void *) buff, (size_t) 2);
+	if (nbread == -1 || nbread == 0)
+		return (-1);
+	buff[1] 
+}
+
+
+int	fd;
+int	open(char *name, int flags, int perms);
+
+fd = open (name, flags, perms);
+
+// flags are:
+
+// O_RDONLY
+// O_WRONGLY
+// O_RDWR
 
 int		main(int argc, char **argv)
 {
