@@ -6,13 +6,13 @@
 #    By: atropnik <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/05/01 00:35:00 by atropnik          #+#    #+#              #
-#    Updated: 2019/05/01 05:28:32 by atropnik         ###   ########.fr        #
+#    Updated: 2019/05/09 17:32:50 by atropnik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = get_next_line
-FLAGS = -Wall -Werror -Wextra -I $(HEADER) -g
-SRC = *.c
+FLAGS = -Wall -Werror -Wextra -I $(HEADER)
+SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 HEADER = get_next_line.h
 
@@ -22,10 +22,17 @@ $(NAME): $(OBJ)
 
 all: $(NAME)
 
+debug:
+	gcc -g get_next_line.c -L libft -lft
+
 clean:
 	/bin/rm -rf $(OBJ)
+	/bin/rm -rf libft/*.o
 
 fclean: clean
 	/bin/rm -rf $(NAME)
 
-re: fclean $(NAME)
+dclean: fclean
+	/bin/rm -rf a.out*
+
+re: fclean all
