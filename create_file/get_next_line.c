@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 21:51:08 by atropnik          #+#    #+#             */
-/*   Updated: 2019/04/08 23:12:11 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/16 21:06:39 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,10 @@ fd = open (name, flags, perms);
 
 int		main(int argc, char **argv)
 {
-	char	buf;
-	int		i;
+	char	*buf;
 	int		fd;
 
-	i = 1;
+	if (argc == 1)
 	if (argc < 2 || argv[1][0] == '-')
 		cat_everything();
 	while (i < argc)
