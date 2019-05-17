@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 04:59:34 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/16 20:35:25 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/16 23:49:12 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_glst	*start_list(int fd)
 
 	if (!(new_list = (t_glst*)malloc(sizeof(t_glst))))
 			return (NULL);
-	new_list->buff = NULL;
+	new_list->buff = ft_strnew(0);
 	new_list->fd = fd;
 	return (new_list);
 }
@@ -46,6 +46,7 @@ int		get_next_line(const int fd, char **line)
 	t_glst			*current;
 	static	t_glst	*fds;
 	int				bytesread;
+	int				size;
 
 	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
@@ -57,9 +58,11 @@ int		get_next_line(const int fd, char **line)
 		if (ft_strchr(buf, '\n'))
 			break ;
 	}
-	if (bytesread < BUFF_SIZE && !ft_strlen(current->buff))
+	if ((bytesread < BUFF_SIZE) && !(ft_strchr(buf, '\n')))
 		return (0);
-	ft_strncpy(*line, current->buff, current->buff - ft_strchr(current->buff, '\n'));
+	size = ft_strchr(current->buff, '\n') - current->buff;
+	*line = ft_strnew(size);
+	ft_strncpy(*line, current->buff, size);
 	return (1);
 }
 
