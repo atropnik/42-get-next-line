@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 04:59:34 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/16 23:49:12 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/17 04:10:55 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_glst	*start_list(int fd)
 	return (new_list);
 }
 
-t_glst	*current_line(const int fd, t_glst **fds)
+t_glst	*current_file(const int fd, t_glst **fds)
 {
 	t_glst			*temp_list;
 
@@ -40,32 +40,61 @@ t_glst	*current_line(const int fd, t_glst **fds)
 	return (temp_list);
 }
 
+int		line_return(t_glst *node, int size, char **line)
+{
+	char			*temp;
+	int				fd;
+	char			*str;
+
+	fd = node->fd;
+	str = node->buff;
+	if (str[size] == '\0')
+	{
+		if (size == BUFF_SIZE)
+			return (get_next_line(fd, line));
+		*line = ft_strdup(str);
+		ft_strdel(&str);
+	}
+	else if (str[size] == '\n')
+	{
+		*line = ft_strsub(str, 0, size);
+		temp = ft_strdup(str + size + 1);
+		free(str);
+		str = temp;
+		if (str[size] == '\0')
+			ft_strdel(&str);
+	}
+	else
+		ft_puterror("Something went wrong");
+	return (1);
+}
+
 int		get_next_line(const int fd, char **line)
 {
 	char			buf[BUFF_SIZE + 1];
-	t_glst			*current;
+	static  t_glst	*node;
 	static	t_glst	*fds;
 	int				bytesread;
 	int				size;
 
 	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
-	current = current_line(fd, &fds);
+	node = current_file(fd, &fds);
 	while ((bytesread = read(fd, buf, BUFF_SIZE)))
 	{
 		buf[bytesread] = '\0';
-		current->buff = ft_strjoin(current->buff, buf);
+		node->buff = ft_strjoin(node->buff, buf);
 		if (ft_strchr(buf, '\n'))
 			break ;
 	}
 	if ((bytesread < BUFF_SIZE) && !(ft_strchr(buf, '\n')))
 		return (0);
-	size = ft_strchr(current->buff, '\n') - current->buff;
-	*line = ft_strnew(size);
-	ft_strncpy(*line, current->buff, size);
-	return (1);
+	size = ft_strchr(node->buff, '\n') - node->buff;
+	// *line = ft_strnew(size);
+	return line_return(node, size, line);
+	// ft_strncpy(*line, node->buff, size);
+	// return (1);
 }
-
 
 int		main(int argc, char **argv)
 {
@@ -81,11 +110,7 @@ int		main(int argc, char **argv)
 		fd = open(argv[1], O_RDONLY);
 		while (get_next_line(fd, &buf) == 1)
 		{
-			int i;
-			i = 0;
-			while (buf[i])
-				write(1, &buf[i++], 1);
-			write (1, "\n", 1);
+			ft_putendl(buf);
 			free(buf);
 		}
 		fd = open(argv[2], O_RDONLY);
