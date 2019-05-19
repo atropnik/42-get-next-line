@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 20:46:03 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/09 23:53:03 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/16 20:40:06 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,15 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 
-int		get_next_line(int fd, char **line);
+int			get_next_line(int fd, char **line);
 
-# define BUFF_SIZE 5000
+typedef struct 		s_glst
+{
+	int		fd;
+	char	*buff;
+	struct s_glst 	*next;
+}					t_glst;
+
+# define BUFF_SIZE 32
 
 #endif

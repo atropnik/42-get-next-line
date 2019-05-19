@@ -5,101 +5,94 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/08 14:47:25 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/09 16:30:35 by atropnik         ###   ########.fr       */
+/*   Created: 2019/05/16 04:59:34 by atropnik          #+#    #+#             */
+/*   Updated: 2019/05/16 23:49:12 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int        ft_malloc_again(char **save)
+t_glst	*start_list(int fd)
 {
-    char    *tmp;
+	t_glst			*new_list;
 
-    if (!(tmp = ft_strnew(ft_strlen(*save))))
-        return (0);
-    ft_strcpy(tmp, *save);
-    *save = NULL;
-    if (!(*save = ft_strnew(ft_strlen(tmp) + BUFF_SIZE)))
-        return (0);
-    ft_strcpy(*save, tmp);
-    return (1);
+	if (!(new_list = (t_glst*)malloc(sizeof(t_glst))))
+			return (NULL);
+	new_list->buff = ft_strnew(0);
+	new_list->fd = fd;
+	return (new_list);
 }
 
-int        fill_line(int j, char **save, char **line)
+t_glst	*current_line(const int fd, t_glst **fds)
 {
-    int        i;
-    int        y;
+	t_glst			*temp_list;
 
-    y = 0;
-    i = 0;
-    if (j != 0 || ft_strlen((*save)) != 0)
-    {
-        while ((*save)[i] != '\n')
-        {
-            (*line)[i] = (*save)[i];
-            i++;
-        }
-        (*line)[i++] = '\0';
-        if ((*save)[0] == '\n')
-        {
-            while ((*save)[i])
-                (*save)[y++] = (*save)[i++];
-            (*save)[y] = '\0';
-            return (2);
-        }
-        while ((*save)[i])
-            (*save)[y++] = (*save)[i++];
-        (*save)[y] = '\0';
-    }
-    return (1);
+	temp_list = *fds;
+	while (temp_list)
+	{
+		if (temp_list->fd == fd)
+			return (temp_list);
+		temp_list = temp_list->next;
+	}
+	temp_list = start_list(fd);
+	temp_list->next = *fds;
+	*fds = temp_list;
+	return (temp_list);
 }
 
-int        get_next_line(int fd, char **line)
+int		get_next_line(const int fd, char **line)
 {
-    int            j;
-    static char    *save;
+	char			buf[BUFF_SIZE + 1];
+	t_glst			*current;
+	static	t_glst	*fds;
+	int				bytesread;
+	int				size;
 
-    if (fd < 0 || (!save && !(save = ft_strnew(BUFF_SIZE))))
-        return (-1);
-    if (!(*line = (char *)malloc(sizeof(char) * BUFF_SIZE)))
-        return (-1);
-    while ((j = read(fd, *line, BUFF_SIZE)) > 0)
-    {
-        if (!(ft_malloc_again(&save)))
-            return (-1);
-        ft_strncat(save, *line, BUFF_SIZE);
-        if (ft_memchr(*line, '\n', BUFF_SIZE))
-            break ;
-    }
-    if ((fill_line(j, &save, &(*line))) == 2)
-        return (1);
-    if (ft_memcmp((*line), save, ft_strlen(*line)) == 0)
-    {
-        if (!(*line = ft_strdup("")))
-            return (1);
-        return (0);
-    }
-    return (1);
+	if (!line || fd < 0 || BUFF_SIZE < 0)
+		return (-1);
+	current = current_line(fd, &fds);
+	while ((bytesread = read(fd, buf, BUFF_SIZE)))
+	{
+		buf[bytesread] = '\0';
+		current->buff = ft_strjoin(current->buff, buf);
+		if (ft_strchr(buf, '\n'))
+			break ;
+	}
+	if ((bytesread < BUFF_SIZE) && !(ft_strchr(buf, '\n')))
+		return (0);
+	size = ft_strchr(current->buff, '\n') - current->buff;
+	*line = ft_strnew(size);
+	ft_strncpy(*line, current->buff, size);
+	return (1);
 }
+
 
 int		main(int argc, char **argv)
 {
 	int		fd;
-	char	*line;
+	char	*buf;
 
 	if (argc == 1)
 		fd = 0;
-	else if (argc == 2)
-		fd = open(argv[1], O_RDONLY);
+	else if (argc > 3)
+		return (0);
 	else
-		return (2);
-	while (get_next_line(fd, &line) == 1)
 	{
-		ft_putendl(line);
-		free(line);
+		fd = open(argv[1], O_RDONLY);
+		while (get_next_line(fd, &buf) == 1)
+		{
+			int i;
+			i = 0;
+			while (buf[i])
+				write(1, &buf[i++], 1);
+			write (1, "\n", 1);
+			free(buf);
+		}
+		fd = open(argv[2], O_RDONLY);
+		while (get_next_line(fd, &buf) == 1)
+		{
+			ft_putendl(buf);
+			free(buf);
+		}
 	}
-	if (argc == 2)
-		close(fd);
-}
-
+} 
