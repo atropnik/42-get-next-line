@@ -6,12 +6,12 @@
 #    By: atropnik <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/05/01 00:35:00 by atropnik          #+#    #+#              #
-#    Updated: 2019/05/09 17:32:50 by atropnik         ###   ########.fr        #
+#    Updated: 2019/05/19 02:42:48 by atropnik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = get_next_line
-FLAGS = -Wall -Werror -Wextra -I $(HEADER)
+FLAGS = -Wall -Werror -Wextra -I $(HEADER) #-g -fsanitize=address
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 HEADER = get_next_line.h
