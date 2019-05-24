@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 04:59:34 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/23 23:29:08 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/24 14:40:45 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ t_glst	*start_list(int fd)
 			return (NULL);
 	new_list->buff = ft_strnew(0);
 	new_list->fd = fd;
+	new_list->next = NULL;
 	return (new_list);
 }
 
@@ -28,17 +29,16 @@ t_glst	*current_file(const int fd, t_glst **fds)
 	t_glst			*temp_list;
 
 	temp_list = *fds;
-	if (temp_list)
+	if (temp_list == NULL)
+		return (start_list(fd));
+	while (temp_list->next || temp_list->fd == fd)
 	{
 		if (temp_list->fd == fd)
 			return (temp_list);
 		temp_list = temp_list->next;
 	}
-	else
-		temp_list = start_list(fd);
-	temp_list->next = *fds;
-	*fds = temp_list;
-	return (temp_list);
+	temp_list->next = start_list(fd);
+	return (temp_list->next);
 }
 
 int		line_return(t_glst *node, int size, char **line)
@@ -55,7 +55,7 @@ int		line_return(t_glst *node, int size, char **line)
 		ft_glstelemfree(&node);
 		return (0);
 	}
-	else if (str[size] == '\n')
+	if (str[size] == '\n')
 	{
 		*line = ft_strsub(str, 0, size);
 		temp = ft_strdup(str + size + 1);
@@ -64,15 +64,13 @@ int		line_return(t_glst *node, int size, char **line)
 		if (str[size] == '\0')
 			ft_strdel(&str);
 	}
-	else
-		ft_puterror("Something went wrong");
 	return (1);
 }
 
 int		get_next_line(const int fd, char **line)
 {
-	char		buf[BUFF_SIZE + 1];
-	static t_glst			*node;
+	char			buf[BUFF_SIZE + 1];
+	static t_glst	*node;
 	int				bytesread;
 	int				size;
 
@@ -81,30 +79,33 @@ int		get_next_line(const int fd, char **line)
 	node = current_file(fd, &node);
 	while ((bytesread = read(fd, buf, BUFF_SIZE)))
 	{
+		if (bytesread < 0)
+			return (-1);
 		buf[bytesread] = '\0';
 		node->buff = ft_strjoinfree(node->buff, buf);
 		if (ft_strchr(node->buff, '\n'))
 			break ;
 	}
 	if ((bytesread < BUFF_SIZE) && !(ft_strchr(node->buff, '\n')))
+	{
+		if (*(node->buff))
+		{
+			*line = ft_strdup(node->buff);
+			ft_bzero((char *)node->buff, ft_strlen(node->buff));
+			return (1);
+		}
 		return (0);
+	}
 	size = ft_strchr(node->buff, '\n') - node->buff;
-	// *line = ft_strnew(size);
 	return (line_return(node, size, line));
-	// ft_strncpy(*line, node->buff, size);
-	// return (1);
 }
 
-/*
 int		main(int argc, char **argv)
 {
 	int		fd;
 	char	*buf;
-
 	if (argc == 1)
 		fd = 0;
-	else if (argc > 3)
-		;
 	else
 	{
 		fd = open(argv[1], O_RDONLY);
@@ -117,4 +118,3 @@ int		main(int argc, char **argv)
 	}
 	return (argc);
 }
-*/
