@@ -1,26 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_glstelemfree.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/04 20:46:03 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/23 23:17:59 by atropnik         ###   ########.fr       */
+/*   Created: 2019/05/23 22:26:06 by atropnik          #+#    #+#             */
+/*   Updated: 2019/05/23 23:22:42 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#include "libft.h"
 
-# include "libft/libft.h"
-# include <fcntl.h>
-# include <unistd.h>
-# include <sys/stat.h>
-# include <sys/types.h>
+void	ft_glstelemfree(t_glst **node)
+{
+	t_glst			*temp;
 
-int			get_next_line(int fd, char **line);
-
-# define BUFF_SIZE 1
-
-#endif
+	if (!node || !*node)
+		return ;
+	if (*node)
+	{
+		temp = (*node)->next;
+		free((*node)->buff);
+		*node = temp;
+	}
+}

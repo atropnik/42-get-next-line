@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 04:59:34 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/23 21:52:07 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/23 23:29:08 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,7 @@ int		line_return(t_glst *node, int size, char **line)
 	if (str[size] == '\0')
 	{
 		*line = ft_strdup(str);
-		ft_strdel(&str);
-		// free(node), point address to next accordingly
+		ft_glstelemfree(&node);
 		return (0);
 	}
 	else if (str[size] == '\n')
@@ -66,7 +65,6 @@ int		line_return(t_glst *node, int size, char **line)
 			ft_strdel(&str);
 	}
 	else
-		// heap-use-after-free error is happening here!
 		ft_puterror("Something went wrong");
 	return (1);
 }
@@ -97,6 +95,7 @@ int		get_next_line(const int fd, char **line)
 	// return (1);
 }
 
+/*
 int		main(int argc, char **argv)
 {
 	int		fd;
@@ -117,4 +116,5 @@ int		main(int argc, char **argv)
 		close(fd);
 	}
 	return (argc);
-} 
+}
+*/
