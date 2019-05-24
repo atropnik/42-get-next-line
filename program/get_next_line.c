@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 04:59:34 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/18 22:05:14 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/23 21:52:07 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,11 @@ int		get_next_line(const int fd, char **line)
 	while ((bytesread = read(fd, buf, BUFF_SIZE)))
 	{
 		buf[bytesread] = '\0';
-		node->buff = ft_strjoin(node->buff, buf);
+		node->buff = ft_strjoinfree(node->buff, buf);
 		if (ft_strchr(node->buff, '\n'))
 			break ;
 	}
-	if ((bytesread < BUFF_SIZE) && !(ft_strchr(buf, '\n')))
+	if ((bytesread < BUFF_SIZE) && !(ft_strchr(node->buff, '\n')))
 		return (0);
 	size = ft_strchr(node->buff, '\n') - node->buff;
 	// *line = ft_strnew(size);
@@ -105,7 +105,7 @@ int		main(int argc, char **argv)
 	if (argc == 1)
 		fd = 0;
 	else if (argc > 3)
-		return (0);
+		;
 	else
 	{
 		fd = open(argv[1], O_RDONLY);
@@ -114,5 +114,7 @@ int		main(int argc, char **argv)
 			ft_putendl(buf);
 			free(buf);
 		}
+		close(fd);
 	}
+	return (argc);
 } 

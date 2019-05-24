@@ -6,33 +6,35 @@
 #    By: atropnik <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/05/01 00:35:00 by atropnik          #+#    #+#              #
-#    Updated: 2019/05/19 02:42:48 by atropnik         ###   ########.fr        #
+#    Updated: 2019/05/23 20:21:36 by atropnik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = get_next_line
-FLAGS = -Wall -Werror -Wextra -I $(HEADER) #-g -fsanitize=address
+FLAGS = -Wall -Werror -Wextra -I $(HEADER) -g -fsanitize=address
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
+LIBFT = libft -lft
 HEADER = get_next_line.h
 
 $(NAME): $(OBJ)
 	make -C libft/
-	gcc $(FLAGS) $(OBJ) -o $(NAME) -L libft -lft
+	gcc $(FLAGS) $(OBJ) -o $(NAME) -L $(LIBFT)
 
 all: $(NAME)
 
 debug:
-	gcc -g get_next_line.c -L libft -lft
+	gcc -g get_next_line.c -L $(LIBFT)
 
 clean:
-	/bin/rm -rf $(OBJ)
-	/bin/rm -rf libft/*.o
+	@/bin/rm -rf $(OBJ)
+	@make -C libft/ clean
 
 fclean: clean
-	/bin/rm -rf $(NAME)
+	@/bin/rm -rf $(NAME)
+	@make -C libft/ fclean
 
 dclean: fclean
-	/bin/rm -rf a.out*
+	@/bin/rm -rf a.out*
 
 re: fclean all

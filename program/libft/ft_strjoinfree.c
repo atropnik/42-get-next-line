@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_strjoinfree.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/14 01:38:11 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/23 20:06:31 by atropnik         ###   ########.fr       */
+/*   Created: 2019/05/23 20:08:08 by atropnik          #+#    #+#             */
+/*   Updated: 2019/05/23 20:18:53 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoinfree(char const *s1, char const *s2)
 {
 	char	*result;
 	int		i;
@@ -36,5 +36,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		result[len] = s1[len];
 		len--;
 	}
+	free((char *)s1);
 	return (result);
 }
