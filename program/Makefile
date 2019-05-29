@@ -6,7 +6,7 @@
 #    By: atropnik <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/05/01 00:35:00 by atropnik          #+#    #+#              #
-#    Updated: 2019/05/23 20:21:36 by atropnik         ###   ########.fr        #
+#    Updated: 2019/05/29 02:32:39 by atropnik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ $(NAME): $(OBJ)
 all: $(NAME)
 
 debug:
-	gcc -g get_next_line.c -L $(LIBFT)
+	gcc -g -fsanitize=address get_next_line.c -L $(LIBFT)
 
 clean:
 	@/bin/rm -rf $(OBJ)

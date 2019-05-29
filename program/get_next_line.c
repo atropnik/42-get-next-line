@@ -6,39 +6,52 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 04:59:34 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/24 14:40:45 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/29 04:32:53 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-t_glst	*start_list(int fd)
+t_glst	*list_funx(int fd, t_glst **fds)
 {
-	t_glst			*new_list;
+	t_glst		*curr;
 
-	if (!(new_list = (t_glst*)malloc(sizeof(t_glst))))
+	curr = *fds;
+	if (curr == NULL)
+	{
+		if (!(curr = (t_glst*)malloc(sizeof(t_glst))))
 			return (NULL);
-	new_list->buff = ft_strnew(0);
-	new_list->fd = fd;
-	new_list->next = NULL;
-	return (new_list);
+		curr->buff = ft_strnew(0);
+		curr->fd = fd;
+		curr->next = NULL;
+		*fds = curr;
+		return (curr);
+	}
+	while (curr->next)
+		curr = curr->next;
+	if (!(curr->next = (t_glst*)malloc(sizeof(t_glst))))
+		return (NULL);
+	curr->next->buff = ft_strnew(0);
+	curr->next->fd = fd;
+	curr->next->next = NULL;
+	return (curr->next);
 }
 
-t_glst	*current_file(const int fd, t_glst **fds)
+t_glst	*which_fd(const int fd, t_glst **fds)
 {
-	t_glst			*temp_list;
+	t_glst			*runner;
 
-	temp_list = *fds;
-	if (temp_list == NULL)
-		return (start_list(fd));
-	while (temp_list->next || temp_list->fd == fd)
+	runner = *fds;
+	if (runner == NULL)
+		return (list_funx(fd, fds));
+	while (runner->next || runner->fd == fd)
 	{
-		if (temp_list->fd == fd)
-			return (temp_list);
-		temp_list = temp_list->next;
+		if (runner->fd == fd)
+			return (runner);
+		runner = runner->next;
 	}
-	temp_list->next = start_list(fd);
-	return (temp_list->next);
+	runner = list_funx(fd, fds);
+	return (runner);
 }
 
 int		line_return(t_glst *node, int size, char **line)
@@ -61,60 +74,45 @@ int		line_return(t_glst *node, int size, char **line)
 		temp = ft_strdup(str + size + 1);
 		free(str);
 		node->buff = temp;
-		if (str[size] == '\0')
-			ft_strdel(&str);
 	}
 	return (1);
+}
+
+int		when_end_line(t_glst **node, char **line)
+{
+	t_glst			*temp;
+
+	temp = *(node);
+	if (*(temp->buff))
+	{
+		*line = ft_strdup(temp->buff);
+		ft_bzero((char *)temp->buff, ft_strlen(temp->buff));
+		return (1);
+	}
+	return (0);
 }
 
 int		get_next_line(const int fd, char **line)
 {
 	char			buf[BUFF_SIZE + 1];
-	static t_glst	*node;
+	static t_glst	*head;
+	t_glst			*node;
 	int				bytesread;
-	int				size;
 
 	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
-	node = current_file(fd, &node);
+	node = which_fd(fd, &head);
 	while ((bytesread = read(fd, buf, BUFF_SIZE)))
 	{
 		if (bytesread < 0)
 			return (-1);
 		buf[bytesread] = '\0';
 		node->buff = ft_strjoinfree(node->buff, buf);
-		if (ft_strchr(node->buff, '\n'))
+		if (ft_strchr(buf, '\n'))
 			break ;
 	}
 	if ((bytesread < BUFF_SIZE) && !(ft_strchr(node->buff, '\n')))
-	{
-		if (*(node->buff))
-		{
-			*line = ft_strdup(node->buff);
-			ft_bzero((char *)node->buff, ft_strlen(node->buff));
-			return (1);
-		}
-		return (0);
-	}
-	size = ft_strchr(node->buff, '\n') - node->buff;
-	return (line_return(node, size, line));
-}
-
-int		main(int argc, char **argv)
-{
-	int		fd;
-	char	*buf;
-	if (argc == 1)
-		fd = 0;
-	else
-	{
-		fd = open(argv[1], O_RDONLY);
-		while (get_next_line(fd, &buf) == 1)
-		{
-			ft_putendl(buf);
-			free(buf);
-		}
-		close(fd);
-	}
-	return (argc);
+		return (when_end_line(&node, line));
+	bytesread = ft_strchr(node->buff, '\n') - node->buff;
+	return (line_return(node, bytesread, line));
 }

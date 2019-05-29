@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 20:01:15 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/23 23:25:00 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/29 04:51:32 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ typedef struct		s_list
 	struct s_list	*next;
 }					t_list;
 
-typedef struct 		s_glst
+typedef struct		s_glst
 {
-	int		fd;
-	char	*buff;
-	struct s_glst 	*next;
+	int				fd;
+	char			*buff;
+	struct s_glst	*next;
 }					t_glst;
 
 t_list				*ft_lstnew(void const *content, size_t content_size);
