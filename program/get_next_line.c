@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/16 04:59:34 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/29 04:32:53 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/29 05:10:13 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,3 +116,27 @@ int		get_next_line(const int fd, char **line)
 	bytesread = ft_strchr(node->buff, '\n') - node->buff;
 	return (line_return(node, bytesread, line));
 }
+
+/*
+int		main(int argc, char **argv)
+{
+	int		fd;
+	char	*buf;
+
+	if (argc == 1)
+		fd = 0;
+	else if (argc > 3)
+		;
+	else
+	{
+		fd = open(argv[1], O_RDONLY);
+		while (get_next_line(fd, &buf) == 1)
+		{
+			ft_putendl(buf);
+			free(buf);
+		}
+		close(fd);
+	}
+	return (argc);
+} 
+*/
