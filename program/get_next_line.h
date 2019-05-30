@@ -6,7 +6,7 @@
 /*   By: atropnik <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 20:46:03 by atropnik          #+#    #+#             */
-/*   Updated: 2019/05/28 19:19:55 by atropnik         ###   ########.fr       */
+/*   Updated: 2019/05/29 17:15:51 by atropnik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 
-int			get_next_line(int fd, char **line);
+# define BUFF_SIZE 1
 
-# define BUFF_SIZE 1000
+int			get_next_line(int fd, char **line);
 
 #endif
