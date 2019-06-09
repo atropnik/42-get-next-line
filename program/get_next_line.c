@@ -25,7 +25,7 @@ t_glst	*list_funx(int fd, t_glst **fds)
 		curr->fd = fd;
 		curr->next = NULL;
 		*fds = curr;
-		return (curr);
+		return (*fds);
 	}
 	while (curr->next)
 		curr = curr->next;
@@ -57,23 +57,26 @@ t_glst	*which_fd(const int fd, t_glst **fds)
 int		line_return(t_glst *node, int size, char **line)
 {
 	char			*temp;
-	int				fd;
 	char			*str;
+	int				i;
 
-	fd = node->fd;
 	str = node->buff;
-	if (str[size] == '\0')
+	i = 0;
+	while (str[i] != '\n' && str[i] != '\0')
+		i++;
+	if (str[i] == '\n')
 	{
-		*line = ft_strdup(str);
-		ft_glstelemfree(&node);
-		return (0);
-	}
-	if (str[size] == '\n')
-	{
-		*line = ft_strsub(str, 0, size);
-		temp = ft_strdup(str + size + 1);
+		*line = ft_strsub(str, 0, i);
+		temp = ft_strdup(str + i + 1);
 		free(str);
 		node->buff = temp;
+	}
+	else if (str[i] == '\0')
+	{
+		if (size == BUFF_SIZE)
+			return (get_next_line(node->fd, line));
+		*line = ft_strdup(str);
+		ft_glstelemfree(&node);
 	}
 	return (1);
 }
@@ -102,41 +105,16 @@ int		get_next_line(const int fd, char **line)
 	if (!line || fd < 0 || BUFF_SIZE < 0)
 		return (-1);
 	node = which_fd(fd, &head);
-	while ((bytesread = read(fd, buf, BUFF_SIZE)))
+	while ((bytesread = read(fd, buf, BUFF_SIZE)) > 0)
 	{
-		if (bytesread < 0)
-			return (-1);
 		buf[bytesread] = '\0';
 		node->buff = ft_strjoinfree(node->buff, buf);
 		if (ft_strchr(buf, '\n'))
 			break ;
 	}
+	if (bytesread < 0)
+		return (-1);
 	if ((bytesread < BUFF_SIZE) && !(ft_strchr(node->buff, '\n')))
 		return (when_end_line(&node, line));
-	bytesread = ft_strchr(node->buff, '\n') - node->buff;
 	return (line_return(node, bytesread, line));
 }
-
-/*
-int		main(int argc, char **argv)
-{
-	int		fd;
-	char	*buf;
-
-	if (argc == 1)
-		fd = 0;
-	else if (argc > 3)
-		;
-	else
-	{
-		fd = open(argv[1], O_RDONLY);
-		while (get_next_line(fd, &buf) == 1)
-		{
-			ft_putendl(buf);
-			free(buf);
-		}
-		close(fd);
-	}
-	return (argc);
-} 
-*/

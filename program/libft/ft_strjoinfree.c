@@ -14,28 +14,21 @@
 
 char	*ft_strjoinfree(char const *s1, char const *s2)
 {
-	char	*result;
-	int		i;
-	int		len;
+	char		*result;
+	size_t		i;
+	size_t		j;
 
 	if (!s1 || !s2)
 		return (NULL);
-	i = ft_strlen(s2);
-	len = ft_strlen(s1) + i;
-	if (!(result = (char *)malloc(sizeof(char) * len + 1)))
+	if (!(result = ft_strnew(ft_strlen(s1) + ft_strlen(s2))))
 		return (NULL);
-	result[len + 1] = '\0';
-	while (i >= 0)
-	{
-		result[len] = s2[i];
-		i--;
-		len--;
-	}
-	while (len >= 0)
-	{
-		result[len] = s1[len];
-		len--;
-	}
+	i = -1;
+	j = -1;
+	while (s1[++i])
+		result[++j] = s1[i];
+	i = -1;
+	while (s2[++i])
+		result[++j] = s2[i];
 	free((char *)s1);
 	return (result);
 }

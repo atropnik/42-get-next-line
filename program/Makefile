@@ -24,7 +24,7 @@ $(NAME): $(OBJ)
 all: $(NAME)
 
 debug:
-	gcc -g -fsanitize=address get_next_line.c -L $(LIBFT)
+	gcc -g get_next_line.c main.c -L $(LIBFT)
 
 clean:
 	@/bin/rm -rf $(OBJ)
