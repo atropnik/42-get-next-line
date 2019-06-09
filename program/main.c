@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include "get_next_line.h"
 
+//credit to 42FileChecker team for this main
+
 int				main(void)
 {
 	char		*line1;
